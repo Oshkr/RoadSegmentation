@@ -9,22 +9,31 @@ from PIL import Image
 
 def main():
     
-    path = "./data/training/image_2/."
+    path_img = "./data/training"
+    path_mask = "./data/training"
 
-    for i,files in enumerate(os.listdir(path)):
+    img_paths = [file for file in sorted(Path(path_img,"image_2").iterdir())]
+    mask_paths = [file for file in sorted(Path(path_mask,"gt_image_2").iterdir()) if "road" in str(file)]
+
+    print(f"{len(img_paths)=}")
+    print(f"{len(mask_paths)=}")
+
+
+    min_h = 100000
+    min_w = 100000
+
+    for i in range(len(img_paths)):
+
+        img = np.array(Image.open(str(img_paths[i])))
+        mask = np.array(Image.open(str(mask_paths[i])))
         
-        print(files)
-        image = np.array(Image.open(Path(path,files)))
-        
-        print(f"{image.shape=}") # 375,1242
-        print(f"{np.max(image)=}") # 255
-        print(f"{np.min(image)=}") # 0
-        print(45*"=")
+        assert(img.shape==mask.shape)
 
-        if i==10:
-            break
+        if img.shape[0] <= min_h and img.shape[1] <= min_w:
+            min_h = img.shape[0]
+            min_w = img.shape[1]
 
-    
+    print(min_h,min_w)
 
 
 if __name__ == "__main__":
